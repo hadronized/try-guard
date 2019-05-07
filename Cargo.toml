@@ -8,6 +8,7 @@ homepage = "https://github.com/phaazon/try-guard"
 repository = "https://github.com/phaazon/try-guard"
 documentation = "https://docs.rs/try-guard"
 readme = "README.md"
+license = "BSD-3-Clause"
 edition = "2018"
 
 [badges]
