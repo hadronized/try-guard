@@ -1,6 +1,6 @@
 [package]
 name = "try-guard"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Dimitri Sabadie <dimitri.sabadie@ledger.fr>"]
 description = "A guard! macro inspired by the guard Alternative function from Haskell."
 keywords = ["guard", "macro", "try"]
