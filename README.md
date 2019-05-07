@@ -47,8 +47,8 @@ fn foo(cond: bool) -> Option<i32> {
 
 ## Custom guard types
 
-This crate also allows you to _guard_ to any time that implements [`Try<Error = NoneError>`]. For
-instance, the following works:
+This crate also allows you to _guard_ to any thing that implements [`Try<Error = NoneError>`].
+For instance, the following works:
 
 ```
 #![feature(try_trait)]
