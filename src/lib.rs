@@ -110,7 +110,7 @@
 //! [`?`]: https://doc.rust-lang.org/std/ops/trait.Try.html
 //! [`Try<Error = NoneError>`]: https://doc.rust-lang.org/std/ops/trait.Try.html
 
-#![cfg_attr(feature = "try-trait", feature(try_trait))]
+#![cfg_attr(feature = "try-trait", feature(try_trait, try_blocks))]
 
 /// The [`guard!`] macro.
 ///
@@ -121,7 +121,7 @@ macro_rules! guard {
     if !$e {
       #[cfg(feature = "try-trait")]
       {
-        return std::ops::Try::from_error(std::option::NoneError);
+        None?
       }
       #[cfg(not(feature = "try-trait"))]
       {
@@ -153,5 +153,60 @@ mod tests {
     }
 
     assert_eq!(foo(), None);
+  }
+
+  #[test]
+  #[cfg(feature = "try-trait")]
+  fn try_success() {
+    let foo: Option<i32> = try {
+      guard!(1 < 2);
+      10
+    };
+
+    assert_eq!(foo, Some(10));
+  }
+
+  #[test]
+  #[cfg(feature = "try-trait")]
+  fn try_failure() {
+    let foo: Option<i32> = try {
+      guard!(1 > 2);
+      10
+    };
+
+    assert_eq!(foo, None);
+  }
+
+  #[cfg(feature = "try-trait")]
+  #[derive(Debug, PartialEq)]
+  struct CustomError;
+
+  #[cfg(feature = "try-trait")]
+  impl From<std::option::NoneError> for CustomError {
+    fn from(_: std::option::NoneError) -> Self {
+      CustomError
+    }
+  }
+
+  #[test]
+  #[cfg(feature = "try-trait")]
+  fn try_result_success() {
+    let foo: Result<i32, CustomError> = try {
+      guard!(1 < 2);
+      10
+    };
+
+    assert_eq!(foo, Ok(10));
+  }
+
+  #[test]
+  #[cfg(feature = "try-trait")]
+  fn try_result_failure() {
+    let foo: Result<i32, CustomError> = try {
+      guard!(1 > 2);
+      10
+    };
+
+    assert_eq!(foo, Err(CustomError));
   }
 }
