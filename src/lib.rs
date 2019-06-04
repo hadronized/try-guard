@@ -132,7 +132,6 @@ macro_rules! guard {
 }
 
 #[macro_export]
-#[cfg(feature = "verify-macro")]
 macro_rules! verify {
   ($e:expr) => {
     if !$e {
@@ -144,7 +143,7 @@ macro_rules! verify {
 }
 
 #[cfg(test)]
-mod guard_tests {
+mod tests {
   use super::*;
 
   #[test]
@@ -221,26 +220,22 @@ mod guard_tests {
 
     assert_eq!(foo, Err(CustomError));
   }
-}
 
-#[cfg(test)]
-#[cfg(feature = "verify-macro")]
-mod verify_tests {
   #[test]
-  fn success() {
+  fn verify_success() {
     let foo = verify!(1 < 2);
     assert_eq!(foo, Some(()));
   }
 
   #[test]
-  fn failure() {
+  fn verify_failure() {
     let foo = verify!(1 > 2);
     assert_eq!(foo, None);
   }
 
   #[test]
   #[cfg(feature = "try-trait")]
-  fn try_success() {
+  fn verify_try_success() {
     let foo: Option<()> = try {
       verify!(1 < 2)?
     };
@@ -249,7 +244,7 @@ mod verify_tests {
 
   #[test]
   #[cfg(feature = "try-trait")]
-  fn try_failure() {
+  fn verify_try_failure() {
     let foo: Option<()> = try {
       verify!(1 > 2)?
     };
