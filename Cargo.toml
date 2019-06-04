@@ -17,4 +17,3 @@ travis-ci = { repository = "phaazon/try-guard", branch = "master" }
 [features]
 default = ["try-trait"]
 try-trait = []
-verify-macro = []
