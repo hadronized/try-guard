@@ -131,6 +131,12 @@ macro_rules! guard {
   };
 }
 
+/// A version of [`guard!`] that doesn’t shortcut.
+///
+/// The advantage of this macro over [`guard!`] is to allow you to manipulate the resulting
+/// [`Option`].
+///
+/// [`guard!`]: guard
 #[macro_export]
 macro_rules! verify {
   ($e:expr) => {
