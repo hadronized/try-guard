@@ -95,6 +95,12 @@
 //! }
 //! ```
 //!
+//! ## Feature flags
+//!
+//!   - The `test-nightly` feature flag can be used to test nightly-related features that come
+//!     freely and don’t require a nightly build of rustc to compile this crate but require one at
+//!     use site.
+//!
 //! [`guard!`]: guard
 //! [`guard`]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Monad.html#v:guard
 //! [`?`]: https://doc.rust-lang.org/std/ops/trait.Try.html
