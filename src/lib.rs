@@ -31,7 +31,8 @@
 //! function — that helps early-return from a function if a predicate is `false`:
 //!
 //! ```
-//! #![feature(try_trait)]
+//! # #![cfg_attr(feature = "test-nightly", feature(try_trait))]
+//! # #[cfg(feature = "test-nightly")] mod lol {
 //!
 //! use try_guard::guard;
 //!
@@ -39,6 +40,7 @@
 //!   guard!(cond);
 //!   Some(42)
 //! }
+//! # }
 //! ```
 //!
 //! ## Custom guard types
@@ -47,7 +49,8 @@
 //! For instance, the following works:
 //!
 //! ```
-//! #![feature(try_trait)]
+//! # #![cfg_attr(feature = "test-nightly", feature(try_trait))]
+//! # #[cfg(feature = "test-nightly")] mod lol {
 //!
 //! use std::ops::Try;
 //! use std::option::NoneError;
@@ -93,6 +96,7 @@
 //!   guard!(cond);
 //!   MyGuard::new(42)
 //! }
+//! # }
 //! ```
 //!
 //! ## Feature flags
