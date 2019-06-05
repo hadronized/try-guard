@@ -35,7 +35,6 @@ This crate provides the [`guard!`] macro — analoguous to the [`guard`] Haskell
 function — that helps early-return from a function if a predicate is `false`:
 
 ```
-#![feature(try_trait)]
 
 use try_guard::guard;
 
@@ -51,7 +50,6 @@ This crate also allows you to _guard_ to any thing that implements [`Try<Error =
 For instance, the following works:
 
 ```
-#![feature(try_trait)]
 
 use std::ops::Try;
 use std::option::NoneError;
