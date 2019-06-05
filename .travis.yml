@@ -12,5 +12,8 @@ os:
 script:
   - rustc --version
   - cargo --version
-  - cargo build --verbose
-  - cargo test --verbose
+  - cargo build
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then cargo test --features test-nightly; else cargo test; fi
+  # Ensure README is synchronized.
+  - cargo install cargo-sync-readme
+  - if [ "$TRAVIS_OS_NAME" == "windows" ]; then cargo sync-readme -c -f bin --crlf; else cargo sync-readme -c -f bin; fi
