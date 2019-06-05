@@ -48,7 +48,6 @@
 //!
 //! ```
 //! #![feature(try_trait)]
-//! # #[cfg(feature = "try-trait")] mod lol {
 //!
 //! use std::ops::Try;
 //! use std::option::NoneError;
@@ -94,23 +93,12 @@
 //!   guard!(cond);
 //!   MyGuard::new(42)
 //! }
-//!
-//! # }
 //! ```
-//!
-//! # Feature flags
-//!
-//!   - The `"try-trait"` flag allows to use `guard!` with any type that implements
-//!     [`Try<Error = NoneError>`]. Disabling this will make `guard!` work only with
-//!     [`Option`]. **Enabled by default.**
-//!     - **This feature currently requires a nightly build.**
 //!
 //! [`guard!`]: guard
 //! [`guard`]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Monad.html#v:guard
 //! [`?`]: https://doc.rust-lang.org/std/ops/trait.Try.html
 //! [`Try<Error = NoneError>`]: https://doc.rust-lang.org/std/ops/trait.Try.html
-
-#![cfg_attr(feature = "try-trait", feature(try_trait, try_blocks))]
 
 /// The [`guard!`] macro.
 ///
@@ -119,14 +107,7 @@
 macro_rules! guard {
   ($e:expr) => {
     if !$e {
-      #[cfg(feature = "try-trait")]
-      {
-        None?
-      }
-      #[cfg(not(feature = "try-trait"))]
-      {
-        return None
-      }
+      None?
     }
   };
 }
@@ -145,115 +126,5 @@ macro_rules! verify {
     } else {
       Some(())
     }
-  }
-}
-
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[test]
-  fn success() {
-    fn foo() -> Option<i32> {
-      guard!(1 < 2);
-      Some(10)
-    }
-
-    assert_eq!(foo(), Some(10));
-  }
-
-  #[test]
-  fn failure() {
-    fn foo() -> Option<i32> {
-      guard!(1 > 2);
-      Some(10)
-    }
-
-    assert_eq!(foo(), None);
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn try_success() {
-    let foo: Option<i32> = try {
-      guard!(1 < 2);
-      10
-    };
-
-    assert_eq!(foo, Some(10));
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn try_failure() {
-    let foo: Option<i32> = try {
-      guard!(1 > 2);
-      10
-    };
-
-    assert_eq!(foo, None);
-  }
-
-  #[cfg(feature = "try-trait")]
-  #[derive(Debug, PartialEq)]
-  struct CustomError;
-
-  #[cfg(feature = "try-trait")]
-  impl From<std::option::NoneError> for CustomError {
-    fn from(_: std::option::NoneError) -> Self {
-      CustomError
-    }
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn try_result_success() {
-    let foo: Result<i32, CustomError> = try {
-      guard!(1 < 2);
-      10
-    };
-
-    assert_eq!(foo, Ok(10));
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn try_result_failure() {
-    let foo: Result<i32, CustomError> = try {
-      guard!(1 > 2);
-      10
-    };
-
-    assert_eq!(foo, Err(CustomError));
-  }
-
-  #[test]
-  fn verify_success() {
-    let foo = verify!(1 < 2);
-    assert_eq!(foo, Some(()));
-  }
-
-  #[test]
-  fn verify_failure() {
-    let foo = verify!(1 > 2);
-    assert_eq!(foo, None);
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn verify_try_success() {
-    let foo: Option<()> = try {
-      verify!(1 < 2)?
-    };
-    assert_eq!(foo, Some(()));
-  }
-
-  #[test]
-  #[cfg(feature = "try-trait")]
-  fn verify_try_failure() {
-    let foo: Option<()> = try {
-      verify!(1 > 2)?
-    };
-    assert_eq!(foo, None);
   }
 }
