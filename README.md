@@ -6,7 +6,7 @@ The [`guard!`] macro.
 
 The [`guard!`] macro implements a control-flow sugar that occurs very often in common Rust code:
 
-```
+```rust
 fn foo(cond: bool) -> Option<i32> {
   if !cond {
     return None;
@@ -24,7 +24,7 @@ boolean value, not an error value.
 
 A not very idiomatic and weird way to rewrite that:
 
-```
+```rust
 fn foo(cond: bool) -> Option<i32> {
   if cond { Some(()) } else { None }?;
   Some(42)
@@ -34,8 +34,7 @@ fn foo(cond: bool) -> Option<i32> {
 This crate provides the [`guard!`] macro — analoguous to the [`guard`] Haskell `Alternative`
 function — that helps early-return from a function if a predicate is `false`:
 
-```
-
+```rust
 use try_guard::guard;
 
 fn foo(cond: bool) -> Option<i32> {
@@ -46,15 +45,17 @@ fn foo(cond: bool) -> Option<i32> {
 
 ## Custom guard types
 
-This crate also allows you to _guard_ to any thing that implements [`Try<Error = NoneError>`].
+This crate also allows you to _guard_ to anything that implements [`Try<Error = NoneError>`] or
+`From<NoneError>` (nightly only).
+
 For instance, the following works:
 
-```
-
+```rust
 use std::ops::Try;
 use std::option::NoneError;
 use try_guard::guard;
 
+#[derive(Clone, Debug, Eq, PartialEq)]
 enum MyGuard<T> {
   Just(T),
   Nothing
@@ -95,6 +96,26 @@ fn foo(cond: bool) -> MyGuard<i32> {
   guard!(cond);
   MyGuard::new(42)
 }
+
+fn main() {
+  assert_eq!(foo(false), MyGuard::Nothing);
+}
+```
+
+## More control on the error type
+
+If you’d rather manipulate the error type when the predicate is false, you might be interested
+in the [`verify!`] macro instead. That macro is akin to [`guard!`] but instead doesn’t exit the
+current scope: it maps the predicate’s truth to either `Some(())` or `None`, allowing you to
+call `Option::ok_or` or whatever error combinator you want to.
+
+```rust
+use try_guard::verify;
+
+fn foo(cond: bool) -> Result<u32, String> {
+  verify!(cond).ok_or("bad condition".to_owned())?;
+  Ok(123)
+}
 ```
 
 ## Feature flags
@@ -104,6 +125,7 @@ fn foo(cond: bool) -> MyGuard<i32> {
     use site.
 
 [`guard!`]: guard
+[`verify!`]: verify
 [`guard`]: http://hackage.haskell.org/package/base-4.12.0.0/docs/Control-Monad.html#v:guard
 [`?`]: https://doc.rust-lang.org/std/ops/trait.Try.html
 [`Try<Error = NoneError>`]: https://doc.rust-lang.org/std/ops/trait.Try.html
